@@ -1,16 +1,17 @@
 import React, { Component } from 'react'
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
 import _ from 'lodash'
+import Slider from 'material-ui/Slider';
+
 
 const styles = {
   block: {
-    maxWidth: 2,
+    maxWidth: 1,
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    // color: 'white'
   },
-  checkbox: {
-    // marginBottom: 16
-  }
+
 }
 
 class Dataset extends Component {
@@ -32,7 +33,8 @@ class Dataset extends Component {
       years,
       ratings,
       yearsClicked: [],
-      ratingsClicked: []
+      ratingsClicked: [],
+      slider: 5
     }
   }
 
@@ -50,6 +52,7 @@ class Dataset extends Component {
                 <RadioButton
                   value={year}
                   label={year}
+                  style={{font: 'white'}}
                 />
               )
             })
@@ -70,12 +73,34 @@ class Dataset extends Component {
             }
           </RadioButtonGroup>
         </div>
+        {/*<div>*/}
+          {/*<Slider*/}
+            {/*axis="x-reverse"*/}
+            {/*min={0}*/}
+            {/*max={10}*/}
+            {/*step={0.1}*/}
+            {/*defaultValue={5}*/}
+            {/*value={this.state.slider}*/}
+            {/*onChange={(e) => this.handleSlider(e, this.state.slider,'slider')}*/}
+          {/*/>*/}
+          {/*<p>*/}
+            {/*<span>{'The value of this slider is: '}</span>*/}
+            {/*<span>{this.state.secondSlider}</span>*/}
+            {/*<span>{' from a range of 0 to 100 inclusive'}</span>*/}
+          {/*</p>*/}
+        {/*</div>*/}
       </div>
     )
   }
 
+  handleSlider = (event, value, label) => {
+    // console.log(event,value, label)
+    this.setState({slider: value});
+    this.addClicks(value, label)
+  }
+
   addClicks (event, label) {
-    console.log(label, event.target.id, event.target.checked, event.target.value)
+    // console.log(event, label, event.target.id, event.target.checked, event.target.value)
 
     if (label === 'year') {
       this.props.callbackParent(event.target.value,null)
@@ -83,6 +108,9 @@ class Dataset extends Component {
 
     if (label === 'rating') {
       this.props.callbackParent(null,event.target.value)
+    }
+    if (label === 'slider') {
+      this.props.callbackParent(null,event)
     }
   }
 }

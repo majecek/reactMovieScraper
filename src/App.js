@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import './App.css'
 import { firebaseDB } from './firebase'
 import _ from 'lodash'
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
-import FlatButton from 'material-ui/FlatButton'
+import { TableRow, TableRowColumn } from 'material-ui/Table'
 import omdb from 'omdb'
 import Dataset from './components/Dataset'
+import MovieCard from './components/MovieCard'
 
 function convertToArray (objGroup) {
   const newArray = []
@@ -19,15 +19,26 @@ function convertToArray (objGroup) {
   return newArray
 }
 
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    // color: 'white'
+  },
+  items: {
+    // color: 'white',
+  }
+}
+
 class App extends Component {
 
   state = {
     movies: [],
-    movies2016: [],
-    movies20002017: [],
+    // movies2016: [],
+    // movies20002017: [],
     moviesAll: [],
-    moviesRating4: [],
-    reset: false,
+    // moviesRating4: [],
+    // reset: false,
     yearSelected: 0,
     ratingSelected: 0
   }
@@ -37,8 +48,9 @@ class App extends Component {
       const moviesArray = convertToArray(snap.val())
 
       const movieList = moviesArray.map(movie => {
-        const movieName = movie.name.slice(0, -11)
-        const movieYear = movie.name.slice(movieName.length + 2, -5)
+        // console.log(movie)
+        const movieName = movie.title
+        const movieYear = movie.year
 
         //saving data in MovieDB
         // this.loadDataToDB(movie,movieName,movieYear)
@@ -47,15 +59,16 @@ class App extends Component {
     })
     firebaseDB.ref('movies').once('value').then(snap => {
       const moviesArray = convertToArray(snap.val())
+      console.log(moviesArray.filter(movie => movie.year >= 2017))
       this.setState({moviesAll: moviesArray})
-      this.setState({movies2016: moviesArray.filter(movie => movie.year >= 2016)})
-      this.setState({movies20002017: moviesArray.filter(movie => movie.year >= 2000)})
+      // this.setState({movies2016: moviesArray.filter(movie => movie.year >= 2016)})
+      // this.setState({movies20002017: moviesArray.filter(movie => movie.year >= 2000)})
       // this.setState({movies: _.orderBy(moviesArray, ['year', 'IMDBRating'], ['desc', 'desc'])})
-      this.setState({movies: _.orderBy(this.state.movies2016, ['year', 'IMDBRating'], ['desc', 'desc'])})
+      this.setState({movies: _.orderBy(this.state.moviesAll, ['year', 'IMDBRating'], ['desc', 'desc'])})
     })
   }
 
-  loadDataToDB(movie,movieName,movieYear) {
+  loadDataToDB (movie, movieName, movieYear) {
     const movieRef = firebaseDB.ref(`movies/${movie.id}`)
 
     omdb.get({title: movieName, year: movieYear}, true, function (err, movie) {
@@ -73,48 +86,56 @@ class App extends Component {
         rating = Number(movie.imdb.rating) > 1 ? movie.imdb.rating : 1
       }
 
-      console.log(movieRef)
-      movieRef.child('year').set(Number.isInteger(Number(movieYear)) ? Number(movieYear) : 1900)
-      movieRef.child('title').set(movieName)
       movieRef.child('IMDBRating').set(rating)
       movieRef.child('poster').set(movie.poster)
-
-
     })
   }
 
   render () {
-    return (
-      <div className="App">
-        <Dataset
-          callbackParent={(year,rating) => this.onChildChanged(year,rating) }
-          reset={this.state.reset}
-        />
-        <div>
-          Limit Dataset:
-          <FlatButton label="All" onClick={() => this.setState({movies: this.state.moviesAll, }) }/>
-          <FlatButton label="2000-2017" onClick={() => this.setState({movies: this.state.movies20002017}) }/>
-          <FlatButton label="2016-2017"
-                      onClick={() => this.setState({movies: _.orderBy(this.state.movies2016, ['year', 'IMDBRating'], ['desc', 'desc'])}) }/>
-        </div>
-        <div>
-          Count of movies: {this.state.movies.length}
-        </div>
-        <Table onCellClick={(rowNumber, columnId) => this.sorting(columnId)}>
-          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-            <TableRow selectable={false}>
-              <TableHeaderColumn>Name</TableHeaderColumn>
-              <TableHeaderColumn>Year</TableHeaderColumn>
-              <TableHeaderColumn >Rating</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody displayRowCheckbox={false} showRowHover={true}>
-            {this.listMovies()}
-          </TableBody>
-        </Table>
-      </div>
+    if (!(this.state.movies && this.state.movies.length > 0)) {
+      return <div>Loading</div>
+    } else {
+      return (
 
-    )
+
+        <div className="App" style={styles.container}>
+          <Dataset
+            callbackParent={(year, rating) => this.onChildChanged(year, rating) }
+            reset={this.state.reset}
+            style={styles.container}
+          />
+          <div>
+            {/*Limit Dataset:*/}
+            {/*<FlatButton label="All" onClick={() => this.setState({movies: this.state.moviesAll, }) }/>*/}
+            {/*<FlatButton label="2000-2017" onClick={() => this.setState({movies: this.state.movies20002017}) }/>*/}
+            {/*<FlatButton label="2016-2017"*/}
+            {/*onClick={() => this.setState({movies: _.orderBy(this.state.movies2016, ['year', 'IMDBRating'], ['desc', 'desc'])}) }/>*/}
+
+          </div>
+          <div>
+            <p>
+            Count of movies: {this.state.movies.length}
+            </p>
+          </div>
+          <div>
+            <MovieCard  />
+          </div>
+          {/*<Table onCellClick={(rowNumber, columnId) => this.sorting(columnId)}>*/}
+          {/*<TableHeader displaySelectAll={false} adjustForCheckbox={false}>*/}
+          {/*<TableRow selectable={false}>*/}
+          {/*<TableHeaderColumn>Name</TableHeaderColumn>*/}
+          {/*<TableHeaderColumn>Year</TableHeaderColumn>*/}
+          {/*<TableHeaderColumn >Rating</TableHeaderColumn>*/}
+          {/*</TableRow>*/}
+          {/*</TableHeader>*/}
+          {/*<TableBody displayRowCheckbox={false} showRowHover={true}>*/}
+          {/*{this.listMovies()}*/}
+          {/*</TableBody>*/}
+          {/*</Table>*/}
+        </div>
+
+      )
+    }
   }
 
   listMovies () {
@@ -125,7 +146,8 @@ class App extends Component {
     const movieList = this.state.movies.map(movie => {
       return (
         <TableRow key={movie.id}>
-          <TableRowColumn><img src={movie.poster} className="thumbnail2" height="60" width="60" /> {movie.title}</TableRowColumn>
+          <TableRowColumn><img src={movie.poster} className="thumbnail2" height="60" width="60"/> {movie.title}
+          </TableRowColumn>
           <TableRowColumn>{movie.year}</TableRowColumn>
           <TableRowColumn>{movie.IMDBRating}</TableRowColumn>
         </TableRow>
@@ -153,13 +175,14 @@ class App extends Component {
     }
   }
 
-  onChildChanged (year = this.state.yearSelected,rating = this.state.ratingSelected) {
+  onChildChanged (year = this.state.yearSelected, rating = this.state.ratingSelected) {
     this.setState({
       yearSelected: year,
       ratingSelected: rating,
       movies: this.state.moviesAll.filter(movie => {
         return movie.year >= year && movie.IMDBRating > rating
-      })})
+      })
+    })
   }
 }
 
