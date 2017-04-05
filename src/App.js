@@ -114,24 +114,12 @@ class App extends Component {
           </div>
           <div>
             <p>
-            Count of movies: {this.state.movies.length}
+              Count of movies: {this.state.movies.length}
             </p>
           </div>
           <div>
-            <MovieCard  />
+            <MovieCard movies={this.state.movies}/>
           </div>
-          {/*<Table onCellClick={(rowNumber, columnId) => this.sorting(columnId)}>*/}
-          {/*<TableHeader displaySelectAll={false} adjustForCheckbox={false}>*/}
-          {/*<TableRow selectable={false}>*/}
-          {/*<TableHeaderColumn>Name</TableHeaderColumn>*/}
-          {/*<TableHeaderColumn>Year</TableHeaderColumn>*/}
-          {/*<TableHeaderColumn >Rating</TableHeaderColumn>*/}
-          {/*</TableRow>*/}
-          {/*</TableHeader>*/}
-          {/*<TableBody displayRowCheckbox={false} showRowHover={true}>*/}
-          {/*{this.listMovies()}*/}
-          {/*</TableBody>*/}
-          {/*</Table>*/}
         </div>
 
       )
