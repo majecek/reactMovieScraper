@@ -34,11 +34,7 @@ class App extends Component {
 
   state = {
     movies: [],
-    // movies2016: [],
-    // movies20002017: [],
     moviesAll: [],
-    // moviesRating4: [],
-    // reset: false,
     yearSelected: 0,
     ratingSelected: 0
   }
@@ -134,7 +130,8 @@ class App extends Component {
     const movieList = this.state.movies.map(movie => {
       return (
         <TableRow key={movie.id}>
-          <TableRowColumn><img src={movie.poster} className="thumbnail2" height="60" width="60"/> {movie.title}
+          <TableRowColumn>
+            <img src={movie.poster} className="thumbnail2" height="60" width="60"/> {movie.title}
           </TableRowColumn>
           <TableRowColumn>{movie.year}</TableRowColumn>
           <TableRowColumn>{movie.IMDBRating}</TableRowColumn>

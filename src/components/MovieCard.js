@@ -25,9 +25,9 @@ const style = {
 }
 
 const MovieCard = ({movies}) => {
-  const movieItems = movies.map(movie => {
+  const movieItems = movies.map((movie, index) => {
     return (
-      <div style={style.containerItem}>
+      <div style={style.containerItem} key={index}>
         <Card style={style.card}>
           <CardMedia >
             <img src={movie.poster} style={style.card} />
@@ -40,7 +40,7 @@ const MovieCard = ({movies}) => {
           {movie.year}
         </div>
         <div>
-          {movie.IMDBRating}
+          {movie.IMDBRating} / 10
         </div>
       </div>
     )

@@ -5,9 +5,14 @@ const styles = {
   block: {
     maxWidth: 1,
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'row'
     // color: 'white'
   },
+  radio: {
+    display: 'flex',
+    flexDirection: 'row',
+    maxWidth: 0
+  }
 
 }
 
@@ -43,10 +48,11 @@ class Dataset extends Component {
         <h3>Filters</h3>
         <div style={styles.block}>
           <h4>Year</h4>
-          <RadioButtonGroup name="YearsClicked" style={styles.block} onChange={(e) => this.addClicks(e, 'year')}>
-            {this.state.years.map(year => {
+          <RadioButtonGroup name='YearsClicked' style={styles.radio} onChange={(e) => this.addClicks(e, 'year')}>
+            {this.state.years.map((year, index) => {
               return (
                 <RadioButton
+                  key={index}
                   value={year}
                   label={year}
                   style={{font: 'white'}}
@@ -58,10 +64,11 @@ class Dataset extends Component {
         </div>
         <div style={styles.block}>
           <h4>Ratings</h4>
-          <RadioButtonGroup name="RatingsClicked" style={styles.block} onChange={(e) => this.addClicks(e, 'rating')}>
-            {this.state.ratings.map(rating => {
+          <RadioButtonGroup name='RatingsClicked' style={styles.block} onChange={(e) => this.addClicks(e, 'rating')}>
+            {this.state.ratings.map((rating, index) => {
               return (
                 <RadioButton
+                  key={index}
                   value={rating}
                   label={rating}
                 />
@@ -69,6 +76,10 @@ class Dataset extends Component {
             })
             }
           </RadioButtonGroup>
+        </div>
+        <div>
+          <h4>text filter</h4>
+          <input name=" "/>
         </div>
       </div>
     )
